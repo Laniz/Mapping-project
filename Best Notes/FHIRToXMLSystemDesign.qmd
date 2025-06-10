@@ -1,0 +1,138 @@
+---
+title: "FHIR to XML Modular Mapping Design"
+format: html
+editor: visual
+---
+
+## Overview
+
+This system is designed to **translate FHIR-compliant JSON resources** into **CollaborateMD-compatible XML** for claim submission. The architecture prioritizes modularity, scalability, and separation of concerns to support future growth and maintenance.
+
+## Design Goals
+
+| Goal                       | Description                                                                 |
+|----------------------------|-----------------------------------------------------------------------------|
+| **Modularity**             | Break the system into small, isolated, reusable components per resource     |
+| **Maintainability**        | Each module can be tested and updated without side effects                  |
+| **Scalability**            | Easily extend to new FHIR resources or RCM partners                         |
+| **Testability**            | Unit tests can target individual mappers without full system dependency     |
+| **Symfony Compatibility**  | Designed to integrate naturally with Symfony’s service container            |
+| **FHIR Compatibility**     | Accurately parse official FHIR structures using native PHP                  |
+| **Vendor Mapping Flexibility** | Allows external mapping configurations and alternate XML formats       |
+
+## System Structure
+
+### Directory Layout
+
+```
+src/Mapping/
+├── MapperInterface.php        # Contract all mappers follow
+├── PatientMapper.php          # Maps FHIR Patient → XML <Patient>
+├── ClaimMapper.php            # Orchestrates full claim build
+├── PractitionerMapper.php     # Maps FHIR Practitioner → <Rendering> / <Referring>
+├── CoverageMapper.php         # Maps FHIR Coverage → <Policy>
+├── EncounterMapper.php        # Maps FHIR Encounter → <Facility>
+├── OrganizationMapper.php     # Maps FHIR Organization → <Payer>, etc.
+
+tests/
+└── PatientMapperTest.php      # Unit test for mapper
+
+public/
+└── index.php                  # CLI runner for development/testing
+```
+
+## Modularity in Detail
+
+### Each Resource = One Mapper
+
+Each mapper:
+
+- Implements the `MapperInterface`
+- Takes a FHIR JSON array and a `DOMDocument`
+- Returns a populated `DOMElement` for XML composition
+
+**Benefits:**
+
+- Encourages *single responsibility*
+- Mappers can be swapped or extended for different vendors
+- Easy mocking and testing
+
+### `MapperInterface`
+
+Defines a contract:
+
+```php
+public function map(array $fhirResource, DOMDocument $doc): DOMElement;
+```
+
+**Why?**
+
+- Uniform function signature
+- Enables polymorphism and future dependency injection
+
+### `ClaimMapper` as Coordinator
+
+`ClaimMapper` is the central piece that:
+
+- Loads necessary related resources (Patient, Practitioner, Encounter, etc.)
+- Delegates transformation to corresponding mappers
+- Builds a complete `<Claim>` XML root node
+
+**Why?**
+
+- Keeps logic centralized without hardcoding mappings
+- Supports chaining and composition of sub-mappers
+
+### Autowiring & Symfony Integration
+
+In Symfony, services in `src/Mapping/` can be:
+
+- Automatically registered via `services.yaml`
+- Injected into `ClaimMapper` or controllers using constructor injection
+
+**Why?**
+
+- Makes the system easy to extend with Symfony best practices
+- Enables future configuration through Symfony configs
+
+## Testing Strategy
+
+### Unit Tests per Mapper
+
+- Focused on one FHIR resource at a time
+- Uses fixture input JSON and asserts correct XML output
+- Allows mocking dependencies and isolated failures
+
+## Future Extensibility
+
+### Adding a New Resource
+
+1. Create `XyzMapper.php` in `src/Mapping/`
+2. Implement `MapperInterface`
+3. Inject and use it in `ClaimMapper`
+
+### Supporting Other RCMs
+
+- Build alternate XML builders under `src/Mapping/VendorX/`
+- Swap implementations using Symfony’s service container or configuration files
+
+### Mapping Rules from Config
+
+- Use YAML or JSON files to define how FHIR fields map to XML
+- Allow non-dev users to tweak logic without touching code
+
+## Security Considerations
+
+- FHIR inputs must be sanitized and validated before mapping
+- Use controlled DOM APIs to avoid XML injection
+- Future: consider schema validation of output XML
+
+## Conclusion
+
+This system design is **structured, flexible, and production-aware**, making it ideal for healthcare data integration where:
+
+- New partners/vendors may be added over time
+- FHIR and XML specs evolve
+- Robust logging, error handling, and retries are required
+
+This modular approach ensures the middleware can grow with your needs, support more data types, and adapt to changes in healthcare standards or APIs.

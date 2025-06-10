@@ -1,0 +1,13 @@
+{
+    "name": "young/bestnotes",
+    "description": "\"Modular FHIR to XML mapping system\"",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shepherd Ncube",
+            "email": "68825578+Laniz@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
