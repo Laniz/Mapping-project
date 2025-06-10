@@ -1,0 +1,6 @@
+Running php - php public/index.php
+Hello world - php -r "echo strtoupper('hello');"
+
+Installing stuff I needed 
+
+Compo

@@ -1,0 +1,2 @@
+Running php - php public/index.php
+Hello world 

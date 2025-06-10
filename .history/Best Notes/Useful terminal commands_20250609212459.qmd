@@ -1,0 +1,13 @@
+Running php - php public/index.php
+Hello world - php -r "echo strtoupper('hello');"
+
+Installing stuff I needed 
+
+Composer - composer install
+auto load with composer - composer init
+
+
+Check sytanx - php -l filename.php
+
+
+Questions, in the p

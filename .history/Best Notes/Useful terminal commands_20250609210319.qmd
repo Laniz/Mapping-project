@@ -1,0 +1,4 @@
+Running php - php public/index.php
+Hello world - php -r "echo strtoupper('hello');"
+
+

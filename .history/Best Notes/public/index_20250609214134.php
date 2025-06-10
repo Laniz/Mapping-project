@@ -12,7 +12,7 @@ $doc = new DOMDocument('1.0', 'UTF-8');
 $doc->formatOutput = true;
 
 // Path to the input JSON file (can be a single Patient or a Bundle)
-$inputPath = __DIR__ . '/../FHIR-Patient-example.json'; 
+$inputPath = __DIR__ . '/../FHIR-Patient-Full.json'; 
 // or change to FHIR-Patient-example.json, FHIR-Patient-example.json
 
 // Load FHIR data from file as JSON text
