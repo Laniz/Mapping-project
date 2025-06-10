@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Mapping\PatientMapper;
+
 require_once __DIR__ . '/../src/Mapping/MapperInterface.php';
 require_once __DIR__ . '/../src/Mapping/PatientMapper.php';
 
