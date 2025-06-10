@@ -1,0 +1,80 @@
+---
+title: "FHIR to XML Mapping Middleware"
+format: gfm
+---
+
+# FHIR to XML Mapping System
+
+This project is a modular PHP middleware that maps FHIR-formatted JSON data into CollaborateMD-compatible XML payloads. It is designed for high configurability and control, particularly for professional healthcare claims.
+
+## 🔧 Features
+
+- Dynamic field extraction using JSON mapping files
+- Native PHP XML generation with `DOMDocument`
+- Modular mappers per FHIR resource (Patient, Practitioner, Coverage, etc.)
+- Supports both single-resource and FHIR Bundle inputs
+- Easily extensible and testable structure
+
+## 🗂 Directory Structure
+
+```
+src/
+├── Mapping/
+│   ├── MapperInterface.php
+│   ├── BaseMapper.php         # (shared extractValue logic)
+│   ├── PatientMapper.php
+│   ├── ClaimMapper.php
+│   ├── ...
+vendor/                        # Composer dependencies
+public/
+├── index.php                 # Entry point and test runner
+FHIR-*.json                   # Input resource examples
+*.json                        # Field mapping config files
+```
+
+## ▶️ Running the Script
+
+You can run the program using the PHP CLI:
+
+```bash
+php public/index.php
+```
+
+The output will be an XML document generated from the input FHIR file.
+
+## 🛠 Configuration
+
+This project uses JSON-based mapping files to extract specific fields from FHIR resources.
+
+### Example: `patient_mapping.json`
+
+```json
+{
+  "name[0].given[0]": "FirstName",
+  "name[0].family": "LastName",
+  "birthDate": "BirthDate",
+  "telecom[0].value": "HomePhone"
+}
+```
+
+These mappings determine which FHIR paths are turned into which XML fields.
+
+## 🧱 How It Works
+
+- Each resource (e.g. Patient) is mapped by a class implementing `MapperInterface`
+- Mappers use a mapping file and `extractValue()` to pull data from the FHIR input
+- The `ClaimMapper` acts as a coordinator and assembles the full XML output
+- The system supports both single resources and Bundles
+
+## 📦 Requirements
+
+- PHP 8+
+- Composer
+
+## 📄 License
+
+MIT License
+
+---
+
+Shepherd Ncube — 2025
