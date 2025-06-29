@@ -1,0 +1,30 @@
+{
+  "resourceType": "Practitioner",
+  "id": "example-behavioral-health",
+  "name": [
+    {
+      "family": "Smith",
+      "given": ["Alex"]
+    }
+  ],
+  "gender": "male",
+  "qualification": [
+    {
+      "identifier": [
+        {
+          "system": "http://hl7.org/fhir/sid/us-npi",
+          "value": "1234567890"
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0360/2.7",
+            "code": "PHD",
+            "display": "Doctor of Philosophy"
+          }
+        ]
+      }
+    }
+  ]
+} 

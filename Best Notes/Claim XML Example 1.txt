@@ -1,0 +1,172 @@
+<ns2:Claim xmlns:ns2="http://www.collaboratemd.com/api/v1/">
+    <OtherIdentifier>CLM123</OtherIdentifier>
+    <Patient>
+        <Identifier></Identifier>
+        <LastName>Doe</LastName>
+        <FirstName>Jane</FirstName>
+        <MiddleInitial></MiddleInitial>
+        <BirthDate>01/01/2016</BirthDate>
+        <Gender>F</Gender>
+        <SSN>012-34-5678</SSN>
+        <Address>
+            <Line1>11601 TEST DRIVE</Line1>
+            <Line2></Line2>
+            <City>ORLANDO</City>
+            <State>FL</State>
+            <Zipcode>32801</Zipcode>
+        </Address>
+        <HomePhone>(555) 323-2133</HomePhone>
+        <CellPhone>(555) 929-0978</CellPhone>
+        <WorkPhone>(555) 929-0977</WorkPhone>
+        <WorkExtension>1234</WorkExtension>
+        <Email>test@test.com</Email>
+        <MaritalStatus>W</MaritalStatus>
+        <Race>5</Race>
+        <Ethnicity>3</Ethnicity>
+        <Language>O</Language>
+        <Policy>
+            <Index>2</Index>
+            <Payer>
+                <Identifier>10725218</Identifier>
+                <Name>FLORIDA MEDICARE</Name>
+                <Address>
+                    <Line1>201 EAST PINE STREET</Line1>
+                    <Line2></Line2>
+                    <City>ORLANDO</City>
+                    <State>FL</State>
+                    <Zipcode>32801</Zipcode>
+                </Address>
+                <PhoneNumber>(888) 882-5821</PhoneNumber>
+                <PayerType>Medicare</PayerType>
+            </Payer>
+            <Insured>
+                <Relationship>1</Relationship>
+                <LastName></LastName>
+                <FirstName></FirstName>
+                <MiddleInitial></MiddleInitial>
+                <BirthDate></BirthDate>
+                <Gender></Gender>
+                <SSN></SSN>
+                <Address>
+                    <Line1>11601 TEST DRIVE</Line1>
+                    <Line2></Line2>
+                    <City>ORLANDO</City>
+                    <State>FL</State>
+                    <Zipcode>32801</Zipcode>
+                </Address>
+                <HomePhone>(321) 323-2133</HomePhone>
+                <WorkPhone>(407) 929-0977</WorkPhone>
+            </Insured>
+            <Authorization>X12307383</Authorization>
+            <MemberID>MEM183468</MemberID>
+            <GroupID>GRP1238946</GroupID>
+            <EffectiveDate>01/01/1989</EffectiveDate>
+            <TerminationDate>01/01/2016</TerminationDate>
+        </Policy>
+        <Policy>
+            <Index>1</Index>
+            <Payer>
+                <Identifier></Identifier>
+                <Name>ADVACARE</Name>
+                <Address>
+                    <Line1>111 TEST KLABNE</Line1>
+                    <Line2></Line2>
+                    <City>APOPKA</City>
+                    <State>FL</State>
+                    <Zipcode>32704</Zipcode>
+                </Address>
+                <PhoneNumber></PhoneNumber>
+                <PayerType></PayerType>
+            </Payer>
+            <Insured>
+                <Relationship>2</Relationship>
+                <LastName>DOE</LastName>
+                <FirstName>TONY</FirstName>
+                <MiddleInitial></MiddleInitial>
+                <BirthDate>01/01/2015</BirthDate>
+                <Gender>M</Gender>
+                <SSN>555-11-5487</SSN>
+                <Address>
+                    <Line1>11601 TEST DRIVE</Line1>
+                    <Line2></Line2>
+                    <City>ORLANDO</City>
+                    <State>FL</State>
+                    <Zipcode>32801</Zipcode>
+                </Address>
+                <HomePhone>(555) 323-2133</HomePhone>
+                <WorkPhone>(555) 929-0977</WorkPhone>
+            </Insured>
+            <Authorization>X12307383</Authorization>
+            <MemberID>MEM183468</MemberID>
+            <GroupID>GRP1238946</GroupID>
+            <EffectiveDate>01/01/1989</EffectiveDate>
+            <TerminationDate>01/01/2016</TerminationDate>
+        </Policy>
+    </Patient>
+    <Rendering>
+        <Identifier>10066071</Identifier>
+        <LastName>YOUR REHAB</LastName>
+        <FirstName></FirstName>
+    </Rendering>
+    <Facility>
+        <Identifier></Identifier>
+        <Name>SPARTAN ALLERGIC CENTER</Name>
+    </Facility>
+    <Referring>
+        <Identifier>1235556789</Identifier>
+        <LastName>Mouse</LastName>
+        <FirstName>Mickey</FirstName>
+        <MiddleInitial>A</MiddleInitial>
+        <Credentials>MD</Credentials>
+        <State>CA</State>
+    </Referring>
+    <Charge>
+        <Index>2</Index>
+        <OtherIdentifier>XYZ123</OtherIdentifier>
+        <FromDate>12/02/2016</FromDate>
+        <ToDate>12/03/2016</ToDate>
+        <CPTCode>00770</CPTCode>
+        <CPTDescription></CPTDescription>
+        <POS>31</POS>
+        <TOS>G</TOS>
+        <Modifier1>73</Modifier1>
+        <Modifier2>80</Modifier2>
+        <Modifier3>81</Modifier3>
+        <Modifier4>82</Modifier4>
+        <Units>2.5</Units>
+        <UnitPrice>67.89</UnitPrice>
+        <Diagnosis>
+            <Index>2</Index>
+            <ICDVersion>9</ICDVersion>
+            <Code>349.31</Code>
+            <Description></Description>
+        </Diagnosis>
+        <Diagnosis>
+            <Index>1</Index>
+            <ICDVersion>9</ICDVersion>
+            <Code>650</Code>
+            <Description></Description>
+        </Diagnosis>
+    </Charge>
+    <Charge>
+        <Index>1</Index>
+        <OtherIdentifier>OI123</OtherIdentifier>
+        <FromDate>12/03/2016</FromDate>
+        <ToDate>12/03/2016</ToDate>
+        <CPTCode>003T</CPTCode>
+        <CPTDescription></CPTDescription>
+        <POS>25</POS>
+        <TOS>7</TOS>
+        <Modifier1></Modifier1>
+        <Modifier2></Modifier2>
+        <Modifier3></Modifier3>
+        <Modifier4></Modifier4>
+        <Units>1.0</Units>
+        <Diagnosis>
+            <Index>1</Index>
+            <ICDVersion>9</ICDVersion>
+            <Code>349.31</Code>
+            <Description></Description>
+        </Diagnosis>
+    </Charge>
+</ns2:Claim>

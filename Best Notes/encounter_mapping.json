@@ -1,0 +1,14 @@
+{
+  "status": "Status",
+  "class.system": "ClassSystem",
+  "class.code": "ClassCode",
+  "class.display": "ClassDisplay",
+  "type[0].coding[0].system": "TypeCodingSystem",
+  "type[0].coding[1].code": "TypeCodingCode",
+  "type[0].coding[2].display": "TypeCodingDisplay",
+  "subject.reference": "SubjectReference",
+  "participant[0].individual.reference": "participantIndividualReference",
+  "period.start": "PeriodStart",
+  "period.end": "PeriodEnd",
+  "serviceProvider.reference": "ServiceProviderReference"
+}

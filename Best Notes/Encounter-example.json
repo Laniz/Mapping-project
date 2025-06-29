@@ -1,0 +1,38 @@
+{
+  "resourceType": "Encounter",
+  "id": "example",
+  "status": "finished",
+  "class": {
+    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+    "code": "AMB",
+    "display": "ambulatory"
+  },
+  "type": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "185349003",
+          "display": "Outpatient visit"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "Patient/example"
+  },
+  "participant": [
+    {
+      "individual": {
+        "reference": "Practitioner/example-behavioral-health"
+      }
+    }
+  ],
+  "period": {
+    "start": "2024-05-28T09:00:00-04:00",
+    "end": "2024-05-28T09:45:00-04:00"
+  },
+  "serviceProvider": {
+    "reference": "Organization/example"
+  }
+} 

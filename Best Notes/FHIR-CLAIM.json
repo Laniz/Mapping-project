@@ -1,0 +1,107 @@
+{
+  "resourceType": "Claim",
+  "id": "example-behavioral-health",
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "professional",
+        "display": "Professional"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "created": "2024-06-01",
+  "provider": {
+    "reference": "Practitioner/example-behavioral-health"
+  },
+  "priority": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+        "code": "normal"
+      }
+    ]
+  },
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/example"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "F32.1",
+            "display": "Major depressive disorder, single episode, moderate"
+          }
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamSequence": [1],
+      "diagnosisSequence": [1],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://www.ama-assn.org/go/cpt",
+            "code": "90834",
+            "display": "Psychotherapy, 45 minutes with patient"
+          }
+        ]
+      },
+      "servicedDate": "2024-05-28",
+      "unitPrice": {
+        "value": 150.00,
+        "currency": "USD"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "net": {
+        "value": 150.00,
+        "currency": "USD"
+      },
+      "locationCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/service-place",
+            "code": "11",
+            "display": "Office"
+          }
+        ]
+      }
+    }
+  ],
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example-behavioral-health"
+      },
+      "role": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/claim-careteamrole",
+            "code": "primary",
+            "display": "Primary provider"
+          }
+        ]
+      }
+    }
+  ]
+} 
