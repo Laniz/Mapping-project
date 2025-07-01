@@ -29,11 +29,11 @@ $data3 = json_decode(file_get_contents($inputPath3), true);
 $root = $doc->createElement("AllMaps");
 
 // Validate input files
-// foreach (['Patient' => $data1, 'Encounter' => $data2, 'Claim' => $data3] as $type => $resource) {
-//     if (!is_array($resource) || !isset($resource['resourceType'])) {
-//         die("Invalid FHIR input for $type: missing or malformed 'resourceType'\n");
-//     }
-// }
+foreach (['Patient' => $data1, 'Encounter' => $data2, 'Claim' => $data3] as $type => $resource) {
+    if (!is_array($resource) || !isset($resource['resourceType'])) {
+        die("Invalid FHIR input for $type: missing or malformed 'resourceType'\n");
+    }
+}
 
 // Map and append all resources using their mappers
 $root->appendChild($patientMapper->map($data1, $doc));

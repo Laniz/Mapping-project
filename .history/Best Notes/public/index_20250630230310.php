@@ -41,5 +41,5 @@ $root->appendChild($encounterMapper->map($data2, $doc));
 $root->appendChild($claimMapper->map($data3, $doc));
 
 // Append and output final XML
-$doc->appendChild($root);
-echo $doc->saveXML();
+XML
+

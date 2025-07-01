@@ -36,8 +36,8 @@ $root = $doc->createElement("AllMaps");
 // }
 
 // Map and append all resources using their mappers
-$root->appendChild($patientMapper->map($data1, $doc));
-$root->appendChild($encounterMapper->map($data2, $doc));
+// $root->appendChild($patientMapper->map($data1, $doc));
+// $root->appendChild($encounterMapper->map($data2, $doc));
 $root->appendChild($claimMapper->map($data3, $doc));
 
 // Append and output final XML

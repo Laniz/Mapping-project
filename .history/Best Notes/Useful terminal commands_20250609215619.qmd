@@ -1,0 +1,20 @@
+Running php - php public/index.php
+Hello world - php -r "echo strtoupper('hello');"
+
+Installing stuff I needed 
+
+Composer - composer install
+auto load with composer - composer init
+
+
+Check sytanx - php -l filename.php
+
+
+Questions, in the patient exam, will mutliple patients be in the same json file, can I get an example of how that would like
+
+Should the fields be hard coded or generated based on whats in the json file?
+
+Json file path questions.
+
+
+Can we have our code in a public repo?

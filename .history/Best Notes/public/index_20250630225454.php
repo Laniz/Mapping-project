@@ -3,13 +3,13 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Mapping\PatientMapper;
-use App\Mapping\EncounterMapper;
-use App\Mapping\ClaimMapper;
+// use App\Mapping\EncounterMapper;
+// use App\Mapping\ClaimMapper;
 
 // Initialize only the mappers you’re using
 $patientMapper = new PatientMapper();
-$encounterMapper = new EncounterMapper();
-$claimMapper = new ClaimMapper();
+// $encounterMapper = new EncounterMapper();
+// $claimMapper = new ClaimMapper();
 
 // Create new XML document
 $doc = new DOMDocument('1.0', 'UTF-8');

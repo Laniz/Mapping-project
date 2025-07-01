@@ -9,7 +9,7 @@ class CoverageMapper extends BaseMapper
 {
     public function __construct()
     {
-        parent::__construct('FHIR-Coverage-example.json');
+        parent::__construct('cov');
     }
 
     protected function getRootElementName(): string

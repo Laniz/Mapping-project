@@ -1,0 +1,67 @@
+---
+title: "Questions for Project Manager"
+format: gfm
+---
+
+# 📋 Questions for Project Manager
+
+## 🧾 Data Format & Examples
+
+1. In the Patient example, will multiple patients ever appear in the same JSON file?
+   - If yes, can you provide an example of what that looks like (e.g., a FHIR `Bundle`)?
+
+2. Will all JSON inputs follow FHIR structure strictly (including references and extensions)?
+
+3. Do we expect nested references (e.g., `Claim → Coverage → Organization`) to always be resolved in advance, or should we handle them programmatically?
+   1. From fhir-claim.json 
+   2. 
+
+4. Do you have a full example JSON for a real claim with all referenced resources included?
+
+---
+
+## 🛠 Field Mapping & Dynamic Logic
+
+5. Should field mappings be hard-coded per resource, or dynamically generated from the JSON + config files?
+
+6. Are there required fields that must always be present in the XML even if not in the JSON?
+
+7. Are we allowed to use a config-based approach to minimize hard-coding (e.g., JSON path to XML element name)?
+
+8. How should we handle unexpected or extra fields in the FHIR JSON?
+
+---
+
+## 📂 File Input/Output Handling
+
+9. What is the expected source of the JSON files — will they be uploaded, streamed, or placed in a fixed folder?
+
+10. Should our code support loading from:
+    - Local files only?
+    - URLs (FHIR API)?
+    - Multiple input files at once (e.g., Claim + Patient + Practitioner)?
+
+11. Should the XML be printed, saved to a file, or posted to an endpoint?
+
+---
+
+## 👨‍💻 Development & Collaboration
+
+12. Can we keep the code in a public GitHub repository?
+    - If yes, are there any guidelines on structure, naming, or documentation?
+
+13. Who else should be reviewing the mapping logic or code?
+
+14. What format would you prefer for code reviews or demoing progress?
+
+15. Should we integrate basic testing (e.g., PHPUnit) into the deliverables?
+
+---
+
+## 📈 Scope and Future Considerations
+
+16. Are we only mapping to CollaborateMD, or do we need to design this to eventually support other RCM partners?
+
+17. Should the system be structured to support bidirectional mapping (XML → FHIR)?
+
+18. Will there be any downstream validation or schemas that we should conform to for the XML output?

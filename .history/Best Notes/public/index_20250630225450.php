@@ -3,8 +3,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Mapping\PatientMapper;
-use App\Mapping\EncounterMapper;
-use App\Mapping\ClaimMapper;
+// use App\Mapping\EncounterMapper;
+// use App\Mapping\ClaimMapper;
 
 // Initialize only the mappers you’re using
 $patientMapper = new PatientMapper();
