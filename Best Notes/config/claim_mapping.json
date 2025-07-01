@@ -1,0 +1,21 @@
+{
+  "id": "ClaimID",
+  "status": "ClaimStatus",
+  "use": "ClaimUse",
+  "created": "ClaimCreatedDate",
+  "patient.reference": "PatientReference",
+  "provider.reference": "ProviderReference",
+  "priority.coding[0].code": "PriorityCode",
+  "insurance[0].coverage.reference": "CoverageReference",
+  "diagnosis[0].diagnosisCodeableConcept.coding[0].code": "DiagnosisCode",
+  "diagnosis[0].diagnosisCodeableConcept.coding[0].display": "DiagnosisDescription",
+  "item[0].productOrService.coding[0].code": "ProcedureCode",
+  "item[0].productOrService.coding[0].display": "ProcedureDescription",
+  "item[0].servicedDate": "ServiceDate",
+  "item[0].unitPrice.value": "UnitPrice",
+  "item[0].quantity.value": "Quantity",
+  "item[0].net.value": "TotalCharge",
+  "item[0].locationCodeableConcept.coding[0].code": "PlaceOfService",
+  "careTeam[0].provider.reference": "CareTeamProvider",
+  "careTeam[0].role.coding[0].code": "CareTeamRole"
+}

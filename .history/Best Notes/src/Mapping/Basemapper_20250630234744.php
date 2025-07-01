@@ -19,18 +19,18 @@ abstract class BaseMapper implements MapperInterface
      * 
      * @param string $mappingFile The relative filename of the mapping JSON file
      */
-    public function __construct(string $mappingFile)
-    {
-        // Point to the config folder
-        $mappingPath = __DIR__ . '/../../config/' . $mappingFile;
+        public function __construct(string $mappingFile)
+        {
+            // Point to the config folder
+            $mappingPath = __DIR__ . '/../../config/' . $mappingFile;
 
-        if (!file_exists($mappingPath)) {
-            throw new \Exception("Mapping file not found: $mappingPath");
+            if (!file_exists($mappingPath)) {
+                throw new \Exception("Mapping file not found: $mappingPath");
+            }
+
+            $json = file_get_contents($mappingPath);
+            $this->mapping = json_decode($json, true);
         }
-
-        $json = file_get_contents($mappingPath);
-        $this->mapping = json_decode($json, true);
-    }
 
     /**
      * Main mapping method required by the MapperInterface.

@@ -21,14 +21,13 @@ abstract class BaseMapper implements MapperInterface
      */
     public function __construct(string $mappingFile)
     {
-        // Point to the config folder
+        // Construct the absolute path to the mapping file
         $mappingPath = __DIR__ . '/../../config/' . $mappingFile;
 
-        if (!file_exists($mappingPath)) {
-            throw new \Exception("Mapping file not found: $mappingPath");
-        }
-
+        // Load the JSON file content as a string
         $json = file_get_contents($mappingPath);
+
+        // Decode the JSON string into an associative array
         $this->mapping = json_decode($json, true);
     }
 

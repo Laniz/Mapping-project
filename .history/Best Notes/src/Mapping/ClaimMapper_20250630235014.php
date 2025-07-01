@@ -14,7 +14,7 @@ class ClaimMapper extends BaseMapper
     public function __construct()
     {
         // Tell the BaseMapper to load the claim mapping config
-        parent::__construct('claim_mapping.json');
+        parent::__construct('');
     }
 
     /**
