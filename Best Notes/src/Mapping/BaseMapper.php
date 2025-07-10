@@ -18,12 +18,11 @@ abstract class BaseMapper implements MapperInterface
     protected array $mapping;
 
     /**
-     * Loads mapping config and validates it.
+     * Loads and parses the mapping JSON config file.
      */
     public function __construct(string $mappingFile)
     {
         $mappingPath = __DIR__ . '/../../config/' . $mappingFile;
-
         error_log("Loading mapping config: $mappingPath");
 
         if (!file_exists($mappingPath)) {
@@ -46,7 +45,7 @@ abstract class BaseMapper implements MapperInterface
     }
 
     /**
-     * Main mapping function: builds an XML element from FHIR data.
+     * Builds the full XML DOM element for this resource type.
      */
     public function map(array $fhir, DOMDocument $doc): DOMElement
     {
@@ -54,36 +53,45 @@ abstract class BaseMapper implements MapperInterface
             throw new \RuntimeException("No field mappings loaded for " . static::class);
         }
 
-        // Root element like <Patient>, <Claim>, etc.
         $element = $doc->createElement($this->getRootElementName());
+        $groups = []; // holds <Address> or <Qualification> type blocks
 
-        // Groupings like <Address> or <Qualification>
-        $groups = [];
-
-        // Split into flat mappings and looped (e.g., item[], diagnosis[])
         $regularMappings = [];
         $loopMappings = [];
 
+        // Separate loop-based mappings like item[].code from flat ones
         foreach ($this->mapping as $fhirPath => $xmlTag) {
             if (preg_match('/^(\w+)\[\]\.(.+)/', $fhirPath, $matches)) {
-                $arrayName = $matches[1]; // e.g., "item"
-                $subPath = $matches[2];   // e.g., "code"
+                $arrayName = $matches[1];
+                $subPath = $matches[2];
                 $loopMappings[$arrayName][] = [$subPath, $xmlTag];
             } else {
                 $regularMappings[$fhirPath] = $xmlTag;
             }
         }
 
-        // --- Flat fields and grouped fields ---
+        /**
+         * Handle flat and grouped elements
+         */
         foreach ($regularMappings as $fhirPath => $xmlTag) {
             $value = $this->extractValue($fhir, $fhirPath);
-
             if ($value === null) {
                 error_log("Missing value for $fhirPath → $xmlTag");
                 continue;
             }
 
-            // Handle grouped output like "Address.City"
+            // Format as MM/DD/YYYY if tag or path indicates a date
+            if (
+                preg_match('/(?:date|birthDate|start|end)$/i', $fhirPath) ||
+                preg_match('/(?:date|birthDate|start|end)$/i', $xmlTag)
+            ) {
+                $value = $this->formatDate((string) $value);
+            }
+
+            // Flag FHIR references for deferred resolution
+            $isReference = str_ends_with(strtolower($fhirPath), 'reference') || str_ends_with(strtolower($xmlTag), 'reference');
+
+            // Handle grouped tags like "Address.City"
             if (strpos($xmlTag, '.') !== false) {
                 [$groupName, $childTag] = explode('.', $xmlTag, 2);
 
@@ -91,18 +99,26 @@ abstract class BaseMapper implements MapperInterface
                     $groups[$groupName] = $doc->createElement($groupName);
                 }
 
-                $groups[$groupName]->appendChild(
-                    $doc->createElement($childTag, htmlspecialchars($value))
-                );
+                $field = $doc->createElement($childTag, htmlspecialchars($value));
+                if ($isReference) {
+                    $field->setAttribute("resolveLater", "true");
+                }
+
+                $groups[$groupName]->appendChild($field);
             } else {
-                // Regular flat field
-                $element->appendChild(
-                    $doc->createElement($xmlTag, htmlspecialchars($value))
-                );
+                // Flat, non-grouped field
+                $field = $doc->createElement($xmlTag, htmlspecialchars($value));
+                if ($isReference) {
+                    $field->setAttribute("resolveLater", "true");
+                }
+
+                $element->appendChild($field);
             }
         }
 
-        // --- Repeating structures like item[], diagnosis[] ---
+        /**
+         * Handle looped structures like diagnosis[], item[]
+         */
         foreach ($loopMappings as $arrayField => $fieldMappings) {
             if (!isset($fhir[$arrayField]) || !is_array($fhir[$arrayField])) {
                 error_log("Expected array for $arrayField, but not found.");
@@ -111,13 +127,23 @@ abstract class BaseMapper implements MapperInterface
 
             foreach ($fhir[$arrayField] as $i => $entry) {
                 $parentTag = null;
-                $container = $doc->createElement("Loop$i"); // fallback
+                $container = $doc->createElement("Loop$i"); // fallback tag name
 
                 foreach ($fieldMappings as [$subPath, $xmlTag]) {
                     $value = $this->extractValue($entry, $subPath);
                     if ($value === null) continue;
 
-                    // Split the XML tag to find parent + child (e.g., "Charge.CPTCode")
+                    // Format dates
+                    if (
+                        preg_match('/(?:date|birthDate|start|end)$/i', $subPath) ||
+                        preg_match('/(?:date|birthDate|start|end)$/i', $xmlTag)
+                    ) {
+                        $value = $this->formatDate((string) $value);
+                    }
+
+                    $isReference = str_ends_with(strtolower($subPath), 'reference') || str_ends_with(strtolower($xmlTag), 'reference');
+
+                    // Parent tag is e.g. "Charge" or "Diagnosis"
                     $parts = explode('.', $xmlTag, 2);
                     if (!$parentTag) {
                         $parentTag = $parts[0];
@@ -125,16 +151,19 @@ abstract class BaseMapper implements MapperInterface
                     }
 
                     $childTag = $parts[1] ?? $xmlTag;
-                    $container->appendChild(
-                        $doc->createElement($childTag, htmlspecialchars($value))
-                    );
+                    $field = $doc->createElement($childTag, htmlspecialchars($value));
+                    if ($isReference) {
+                        $field->setAttribute("resolveLater", "true");
+                    }
+
+                    $container->appendChild($field);
                 }
 
                 $element->appendChild($container);
             }
         }
 
-        // Append all group elements (like <Address>) at the end
+        // Attach any <Address>, <Qualification>, etc. groups
         foreach ($groups as $groupElement) {
             $element->appendChild($groupElement);
         }
@@ -143,17 +172,15 @@ abstract class BaseMapper implements MapperInterface
     }
 
     /**
-     * Subclasses define the root tag for each mapped object.
+     * Subclasses must define the root XML tag (e.g. "Patient", "Claim").
      */
     abstract protected function getRootElementName(): string;
 
     /**
-     * Extracts a deeply nested value from a FHIR structure using bracket-dot notation.
-     * Example: "address[0].city"
+     * Dotted/bracketed path parser for FHIR paths like "item[0].code"
      */
     protected function extractValue(array $data, string $path)
     {
-        // Split path on dots (but keep [0] together)
         $segments = preg_split('/\.(?![^\[]*\])/', $path);
 
         foreach ($segments as $segment) {
@@ -176,5 +203,18 @@ abstract class BaseMapper implements MapperInterface
         }
 
         return is_array($data) ? null : $data;
+    }
+
+    /**
+     * Converts ISO/FHIR dates into MM/DD/YYYY format
+     */
+    protected function formatDate(string $input): string
+    {
+        try {
+            $dt = new \DateTime($input);
+            return $dt->format('m/d/Y');
+        } catch (\Exception $e) {
+            return $input;
+        }
     }
 }

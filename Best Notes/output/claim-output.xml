@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:Claim xmlns:ns2="http://www.collaboratemd.com/api/v1/">
+  <OtherIdentifier>example-behavioral-health</OtherIdentifier>
+  <Patient>
+    <FirstName>Jane</FirstName>
+    <LastName>Doe</LastName>
+    <Gender>female</Gender>
+    <BirthDate>04/12/1985</BirthDate>
+    <HomePhone>(555) 123-4567</HomePhone>
+    <Email>jane.doe@example.com</Email>
+    <MaritalStatus>M</MaritalStatus>
+    <Language>en</Language>
+    <Address>
+      <Line1>123 Main St</Line1>
+      <Line2>Apt 4B</Line2>
+      <City>Metropolis</City>
+      <State>NY</State>
+      <Zipcode>10001</Zipcode>
+      <Country>USA</Country>
+    </Address>
+    <Policy>
+      <Index>1</Index>
+      <MemberID>MEM183468</MemberID>
+      <GroupID>GRP1238946</GroupID>
+      <Authorization>X12307383</Authorization>
+      <Insured>
+        <Relationship>1</Relationship>
+        <LastName>Doe</LastName>
+        <FirstName>Jane</FirstName>
+        <Gender>female</Gender>
+        <BirthDate>04/12/1985</BirthDate>
+        <Address>
+          <Line1>123 Main St</Line1>
+          <City>Metropolis</City>
+          <State>NY</State>
+          <Zipcode>10001</Zipcode>
+        </Address>
+      </Insured>
+      <Payer>
+        <Name>Acme Health Insurance</Name>
+        <Address>
+          <Line1>123 Main St</Line1>
+          <City>Metropolis</City>
+          <State>NY</State>
+          <Zipcode>10001</Zipcode>
+        </Address>
+      </Payer>
+      <EffectiveDate>01/01/2024</EffectiveDate>
+      <TerminationDate>12/31/2024</TerminationDate>
+    </Policy>
+  </Patient>
+  <Coverage>
+    <Status>active</Status>
+    <Type>
+      <Code>EHCPOL</Code>
+      <Display>extended healthcare</Display>
+    </Type>
+    <Subscriber>
+      <Reference resolveLater="true">Patient/example</Reference>
+    </Subscriber>
+    <Beneficiary>
+      <Reference resolveLater="true">Patient/example</Reference>
+    </Beneficiary>
+    <Payor>
+      <Reference resolveLater="true">Organization/example</Reference>
+    </Payor>
+    <Period>
+      <Start>01/01/2024</Start>
+      <End>12/31/2024</End>
+    </Period>
+    <Class>
+      <Value>12345</Value>
+      <Name>Acme Behavioral Health Group</Name>
+    </Class>
+  </Coverage>
+  <Rendering>
+    <LastName>Smith</LastName>
+    <FirstName>Alex</FirstName>
+    <Gender>male</Gender>
+    <Qualification>
+      <Identifier>1234567890</Identifier>
+      <Credentials>PHD</Credentials>
+    </Qualification>
+  </Rendering>
+  <Organization>
+    <Name>Acme Health Insurance</Name>
+    <Address>
+      <Line1>123 Main St</Line1>
+      <City>Metropolis</City>
+      <State>NY</State>
+      <Zipcode>10001</Zipcode>
+      <Country>USA</Country>
+    </Address>
+  </Organization>
+  <Claim>
+    <ClaimID>example-behavioral-health</ClaimID>
+    <ClaimStatus>active</ClaimStatus>
+    <ClaimUse>claim</ClaimUse>
+    <ClaimCreatedDate>06/01/2024</ClaimCreatedDate>
+    <PatientReference resolveLater="true">Patient/example</PatientReference>
+    <ProviderReference resolveLater="true">Practitioner/example-behavioral-health</ProviderReference>
+    <PriorityCode>normal</PriorityCode>
+    <CoverageReference resolveLater="true">Coverage/example</CoverageReference>
+    <CareTeamProvider resolveLater="true">Practitioner/example-behavioral-health</CareTeamProvider>
+    <CareTeamRole>primary</CareTeamRole>
+    <Charge>
+      <CPTCode>90834</CPTCode>
+      <CPTDescription>Psychotherapy, 45 minutes with patient</CPTDescription>
+      <ServiceDate>05/28/2024</ServiceDate>
+      <UnitPrice>150</UnitPrice>
+      <Units>1</Units>
+      <TotalCharge>150</TotalCharge>
+      <POS>11</POS>
+      <Sequence>1</Sequence>
+    </Charge>
+    <Diagnosis>
+      <Code>F32.1</Code>
+      <Description>Major depressive disorder, single episode, moderate</Description>
+      <Sequence>1</Sequence>
+    </Diagnosis>
+    <Insurance>
+      <Sequence>1</Sequence>
+      <Focal>1</Focal>
+    </Insurance>
+  </Claim>
+</ns2:Claim>

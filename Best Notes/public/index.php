@@ -2,20 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Mapping\PatientMapper;
-use App\Mapping\EncounterMapper;
-use App\Mapping\ClaimMapper;
-use App\Mapping\PractitionerMapper;
-use App\Mapping\OrganizationMapper;
-use App\Mapping\CoverageMapper;
-
-// Initialize all required mappers
-$patientMapper = new PatientMapper();
-$encounterMapper = new EncounterMapper();
-$claimMapper = new ClaimMapper();
-$coverageMapper = new CoverageMapper();
-$practitionerMapper = new PractitionerMapper();
-$organizationMapper = new OrganizationMapper();
+use App\Mapping\CompositeClaimMapper;
 
 // Create new XML document
 $doc = new DOMDocument('1.0', 'UTF-8');
@@ -37,18 +24,35 @@ $data4 = json_decode(file_get_contents($inputPath4), true); // Practitioner
 $data5 = json_decode(file_get_contents($inputPath5), true); // Organization
 $data6 = json_decode(file_get_contents($inputPath6), true); // Coverage
 
+// Initialize composite mapper
+$compositeMapper = new CompositeClaimMapper();
 
-// Create root XML element
-$root = $doc->createElement("AllMaps");
+// Build single <ns2:Claim> block
+$combinedClaim = $compositeMapper->mapAll($data3, $data1, $data6, $data4, $data5, $doc);
 
-// Map and append all resources using their mappers
-$root->appendChild($patientMapper->map($data1, $doc));
-$root->appendChild($encounterMapper->map($data2, $doc));
-$root->appendChild($claimMapper->map($data3, $doc));
-$root->appendChild($practitionerMapper->map($data4, $doc));
-$root->appendChild($organizationMapper->map($data5, $doc));
-$root->appendChild($coverageMapper->map($data6, $doc));
+// Append to XML root
+$doc->appendChild($combinedClaim);
 
-// Append and output final XML
-$doc->appendChild($root);
+// Output to console
 echo $doc->saveXML();
+
+// Save to file
+$outputPath = __DIR__ . '/../output/claim-output.xml';
+
+if (!is_dir(dirname($outputPath))) {
+    mkdir(dirname($outputPath), 0777, true);
+}
+
+// $doc->save($outputPath);
+// echo " XML saved to: $outputPath\n";
+
+// Save to file
+$outputPath = __DIR__ . '/../output/claim-output.xml';
+
+if (!is_dir(dirname($outputPath))) {
+    mkdir(dirname($outputPath), 0777, true); // Create output/ directory if it doesn't exist
+}
+
+$doc->save($outputPath);
+
+echo "XML saved to: $outputPath\n";
