@@ -5,12 +5,12 @@
   "birthDate": "BirthDate",
   "telecom[0].value": "HomePhone",
   "telecom[1].value": "Email",
-  "address[0].line[0]": "Line1",
-  "address[0].line[1]": "Line2",
-  "address[0].city": "City",
-  "address[0].state": "State",
-  "address[0].postalCode": "Zipcode",
-  "address[0].country": "Country",
+  "address[0].line[0]": "Address.Line1",
+  "address[0].line[1]": "Address.Line2",
+  "address[0].city": "Address.City",
+  "address[0].state": "Address.State",
+  "address[0].postalCode": "Address.Zipcode",
+  "address[0].country": "Address.Country",
   "maritalStatus.coding[0].code": "MaritalStatus",
   "communication[0].language.coding[0].code": "Language"
 }

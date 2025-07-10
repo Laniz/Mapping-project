@@ -1,114 +1,180 @@
 <?php
 
-namespace App\Mapping; // Define the namespace where this class resides
+namespace App\Mapping;
 
-use DOMDocument;  // Import PHP's DOMDocument class for building XML documents
-use DOMElement;   // Import DOMElement for creating XML elements
+use DOMDocument;
+use DOMElement;
 
 /**
- * BaseMapper is an abstract class that provides common logic
- * for mapping FHIR JSON data to XML based on a JSON field mapping configuration.
+ * Abstract base class for FHIR → XML mapping.
+ * Uses a config file to translate paths to XML elements.
+ * Supports:
+ *   - flat fields
+ *   - grouped elements (e.g., Address.City)
+ *   - array-based loops (e.g., item[].code → Charge.Code)
  */
 abstract class BaseMapper implements MapperInterface
 {
-    // Holds the key-value pairs from the mapping file (FHIR path → XML tag)
     protected array $mapping;
 
     /**
-     * Constructor loads a mapping configuration file (e.g., patient_mapping.json).
-     * 
-     * @param string $mappingFile The relative filename of the mapping JSON file
+     * Loads mapping config and validates it.
      */
     public function __construct(string $mappingFile)
     {
-        // Point to the config folder
         $mappingPath = __DIR__ . '/../../config/' . $mappingFile;
 
+        error_log("Loading mapping config: $mappingPath");
+
         if (!file_exists($mappingPath)) {
-            throw new \Exception("Mapping file not found: $mappingPath");
+            throw new \RuntimeException("Mapping file not found: $mappingPath");
         }
 
         $json = file_get_contents($mappingPath);
-        $this->mapping = json_decode($json, true);
+        $decoded = json_decode($json, true);
+
+        if (!is_array($decoded)) {
+            throw new \RuntimeException("Invalid JSON structure in mapping file: $mappingPath");
+        }
+
+        if (empty($decoded)) {
+            throw new \RuntimeException("Mapping file is empty: $mappingPath");
+        }
+
+        $this->mapping = $decoded;
+        error_log("Mapping config loaded for " . static::class . " with " . count($this->mapping) . " fields.");
     }
 
     /**
-     * Main mapping method required by the MapperInterface.
-     * It generates an XML element using the mapping config and FHIR data.
-     *
-     * @param array $fhir The decoded FHIR resource as an array
-     * @param DOMDocument $doc The DOMDocument to which new elements will belong
-     * @return DOMElement The fully built XML element for this resource
+     * Main mapping function: builds an XML element from FHIR data.
      */
     public function map(array $fhir, DOMDocument $doc): DOMElement
     {
-        // Create the root XML element (e.g., <Patient>, <Coverage>, etc.)
+        if (empty($this->mapping)) {
+            throw new \RuntimeException("No field mappings loaded for " . static::class);
+        }
+
+        // Root element like <Patient>, <Claim>, etc.
         $element = $doc->createElement($this->getRootElementName());
 
-        // Loop through each mapping entry: FHIR path => XML tag
+        // Groupings like <Address> or <Qualification>
+        $groups = [];
+
+        // Split into flat mappings and looped (e.g., item[], diagnosis[])
+        $regularMappings = [];
+        $loopMappings = [];
+
         foreach ($this->mapping as $fhirPath => $xmlTag) {
-            // Extract the value from the FHIR array using the path
-            $value = $this->extractValue($fhir, $fhirPath);
-
-            // Only add the field if a value was found
-            if (!is_null($value)) {
-                // Create the child XML element and add it to the root
-            $field = $doc->createElement("Field", htmlspecialchars($value ?? ''));
-                $field->setAttribute("name", $fhirPath);  // Add original path as metadata
-                $element->appendChild($field);
-
+            if (preg_match('/^(\w+)\[\]\.(.+)/', $fhirPath, $matches)) {
+                $arrayName = $matches[1]; // e.g., "item"
+                $subPath = $matches[2];   // e.g., "code"
+                $loopMappings[$arrayName][] = [$subPath, $xmlTag];
+            } else {
+                $regularMappings[$fhirPath] = $xmlTag;
             }
         }
 
-        // Return the finished XML element
+        // --- Flat fields and grouped fields ---
+        foreach ($regularMappings as $fhirPath => $xmlTag) {
+            $value = $this->extractValue($fhir, $fhirPath);
+
+            if ($value === null) {
+                error_log("Missing value for $fhirPath → $xmlTag");
+                continue;
+            }
+
+            // Handle grouped output like "Address.City"
+            if (strpos($xmlTag, '.') !== false) {
+                [$groupName, $childTag] = explode('.', $xmlTag, 2);
+
+                if (!isset($groups[$groupName])) {
+                    $groups[$groupName] = $doc->createElement($groupName);
+                }
+
+                $groups[$groupName]->appendChild(
+                    $doc->createElement($childTag, htmlspecialchars($value))
+                );
+            } else {
+                // Regular flat field
+                $element->appendChild(
+                    $doc->createElement($xmlTag, htmlspecialchars($value))
+                );
+            }
+        }
+
+        // --- Repeating structures like item[], diagnosis[] ---
+        foreach ($loopMappings as $arrayField => $fieldMappings) {
+            if (!isset($fhir[$arrayField]) || !is_array($fhir[$arrayField])) {
+                error_log("Expected array for $arrayField, but not found.");
+                continue;
+            }
+
+            foreach ($fhir[$arrayField] as $i => $entry) {
+                $parentTag = null;
+                $container = $doc->createElement("Loop$i"); // fallback
+
+                foreach ($fieldMappings as [$subPath, $xmlTag]) {
+                    $value = $this->extractValue($entry, $subPath);
+                    if ($value === null) continue;
+
+                    // Split the XML tag to find parent + child (e.g., "Charge.CPTCode")
+                    $parts = explode('.', $xmlTag, 2);
+                    if (!$parentTag) {
+                        $parentTag = $parts[0];
+                        $container = $doc->createElement($parentTag);
+                    }
+
+                    $childTag = $parts[1] ?? $xmlTag;
+                    $container->appendChild(
+                        $doc->createElement($childTag, htmlspecialchars($value))
+                    );
+                }
+
+                $element->appendChild($container);
+            }
+        }
+
+        // Append all group elements (like <Address>) at the end
+        foreach ($groups as $groupElement) {
+            $element->appendChild($groupElement);
+        }
+
         return $element;
     }
 
     /**
-     * Subclasses must define the name of the root XML element (e.g., "Patient").
-     *
-     * @return string The XML tag name
+     * Subclasses define the root tag for each mapped object.
      */
     abstract protected function getRootElementName(): string;
 
     /**
-     * Recursively extract a value from a deeply nested FHIR array using a dotted path.
-     *
-     * @param array $data The full FHIR array
-     * @param string $path A string path like "address[0].city"
-     * @return mixed|null The extracted value or null if not found
+     * Extracts a deeply nested value from a FHIR structure using bracket-dot notation.
+     * Example: "address[0].city"
      */
     protected function extractValue(array $data, string $path)
     {
-        // Split the path on dots, ignoring dots inside brackets
+        // Split path on dots (but keep [0] together)
         $segments = preg_split('/\.(?![^\[]*\])/', $path);
 
-        // Walk through each segment to drill down into the array
         foreach ($segments as $segment) {
-            // If the segment includes an index (e.g., "address[0]")
             if (preg_match('/(\w+)\[(\d+)\]/', $segment, $matches)) {
-                $key = $matches[1];        // array name, e.g., "address"
-                $index = (int) $matches[2]; // array index, e.g., 0
+                $key = $matches[1];
+                $index = (int) $matches[2];
 
-                // Check if the indexed item exists
                 if (!isset($data[$key][$index])) {
                     return null;
                 }
 
-                // Move one level deeper
                 $data = $data[$key][$index];
             } else {
-                // Simple field access (e.g., "city")
                 if (!isset($data[$segment])) {
                     return null;
                 }
 
-                // Move deeper into the structure
                 $data = $data[$segment];
             }
         }
 
-        // Return the value if it's a string or scalar, not an array
         return is_array($data) ? null : $data;
     }
 }

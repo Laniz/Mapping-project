@@ -2,14 +2,14 @@
 
 namespace App\Mapping;
 
-use DOMDocument;
-use DOMElement;
-
+/**
+ * Maps FHIR Coverage resource to XML using coverage_mapping.json
+ */
 class CoverageMapper extends BaseMapper
 {
     public function __construct()
     {
-        parent::__construct('FHIR-Coverage-example.json');
+        parent::__construct('coverage_mapping.json');
     }
 
     protected function getRootElementName(): string

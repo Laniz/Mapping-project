@@ -1,0 +1,8 @@
+{
+  "name": "Name",
+  "address[0].line[0]": "Address.Line1",
+  "address[0].city": "Address.City",
+  "address[0].state": "Address.State",
+  "address[0].postalCode": "Address.Zipcode",
+  "address[0].country": "Address.Country"
+}

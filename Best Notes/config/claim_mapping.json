@@ -7,15 +7,22 @@
   "provider.reference": "ProviderReference",
   "priority.coding[0].code": "PriorityCode",
   "insurance[0].coverage.reference": "CoverageReference",
-  "diagnosis[0].diagnosisCodeableConcept.coding[0].code": "DiagnosisCode",
-  "diagnosis[0].diagnosisCodeableConcept.coding[0].display": "DiagnosisDescription",
-  "item[0].productOrService.coding[0].code": "ProcedureCode",
-  "item[0].productOrService.coding[0].display": "ProcedureDescription",
-  "item[0].servicedDate": "ServiceDate",
-  "item[0].unitPrice.value": "UnitPrice",
-  "item[0].quantity.value": "Quantity",
-  "item[0].net.value": "TotalCharge",
-  "item[0].locationCodeableConcept.coding[0].code": "PlaceOfService",
+
   "careTeam[0].provider.reference": "CareTeamProvider",
-  "careTeam[0].role.coding[0].code": "CareTeamRole"
+  "careTeam[0].role.coding[0].code": "CareTeamRole",
+
+  "item[].productOrService.coding[0].code": "Charge.CPTCode",
+  "item[].productOrService.coding[0].display": "Charge.CPTDescription",
+  "item[].servicedDate": "Charge.ServiceDate",
+  "item[].unitPrice.value": "Charge.UnitPrice",
+  "item[].quantity.value": "Charge.Units",
+  "item[].net.value": "Charge.TotalCharge",
+  "item[].locationCodeableConcept.coding[0].code": "Charge.POS",
+
+  "diagnosis[].diagnosisCodeableConcept.coding[0].code": "Diagnosis.Code",
+  "diagnosis[].diagnosisCodeableConcept.coding[0].display": "Diagnosis.Description",
+  "diagnosis[].sequence": "Diagnosis.Sequence",
+  "item[].sequence": "Charge.Sequence",
+  "insurance[0].sequence": "Insurance.Sequence",
+  "insurance[0].focal": "Insurance.Focal"
 }
