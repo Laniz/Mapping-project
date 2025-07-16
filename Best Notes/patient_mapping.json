@@ -1,0 +1,16 @@
+{
+  "name[0].given[0]": "FirstName",
+  "name[0].family": "LastName",
+  "gender": "Gender",
+  "birthDate": "BirthDate",
+  "telecom[0].value": "HomePhone",
+  "telecom[1].value": "Email",
+  "address[0].line[0]": "Line1",
+  "address[0].line[1]": "Line2",
+  "address[0].city": "City",
+  "address[0].state": "State",
+  "address[0].postalCode": "Zipcode",
+  "address[0].country": "Country",
+  "maritalStatus.coding[0].code": "MaritalStatus",
+  "communication[0].language.coding[0].code": "Language"
+}
