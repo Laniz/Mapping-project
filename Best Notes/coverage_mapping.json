@@ -1,0 +1,11 @@
+{
+  "subscriber.reference": "SubscriberReference",
+  "beneficiary.reference": "BeneficiaryReference",
+  "payor[0].reference": "PayorReference",
+  "period.start": "PeriodStart",
+  "period.end": "PeriodEnd",
+  "class[0].type.coding[0].system": "ClassTypeCodingSystem",
+  "class[0].type.coding[1].code": "ClassTypeCodingCode",
+  "class[1].value": "ClassValue",
+  "class[1].name": "ClassName" 
+}
