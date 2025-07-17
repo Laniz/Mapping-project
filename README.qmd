@@ -1,22 +1,21 @@
 ---
-title: "FHIR to XML Mapping Middleware"
-format: gfm
----
 
-# FHIR to XML Mapping System
+## title: "FHIR to CollaborateMD XML Mapping Middleware" format: gfm
+
+# FHIR to CollaborateMD XML Mapping System
 
 This project is a modular PHP middleware that maps FHIR-formatted JSON data into CollaborateMD-compatible XML payloads. It is designed for high configurability, clarity, and real-world healthcare claims integration.
 
 ## Features
 
--  **JSON-driven field mapping** with support for nested paths and grouped tags
--  **Modular mappers** for each FHIR resource (`Patient`, `Practitioner`, `Claim`, `Coverage`, etc.)
--  **Loop handling** for arrays like `item[]`, `diagnosis[]`, etc.
--  **Grouped elements** like `<Address>` or `<Qualification>` from flat paths (`Address.City`)
--  **FHIR reference deferral**: adds `resolveLater="true"` for unresolved external references
--  **Composite mapping support**: e.g. inline `<Policy>` under `<Patient>`
--  **Auto-save XML** to file in the `output/` directory
--  Cleanly formatted XML via PHP's native `DOMDocument`
+- JSON-driven field mapping with support for nested paths and grouped tags
+- Modular mappers for each FHIR resource (`Patient`, `Practitioner`, `Claim`, `Coverage`, etc.)
+- Loop handling for arrays like `item[]`, `diagnosis[]`, etc.
+- Grouped XML elements such as `<Address>` or `<Qualification>` derived from dot-paths (e.g., `Address.City`)
+- Deferred FHIR reference resolution by appending `resolveLater="true"` to unresolved references
+- Composite mapping support, such as inline `<Policy>` blocks within `<Patient>`
+- Automatic XML saving to the `output/` directory
+- Clean and readable XML formatting via PHP’s native `DOMDocument`
 
 ## Directory Structure
 
@@ -24,41 +23,43 @@ This project is a modular PHP middleware that maps FHIR-formatted JSON data into
 src/
 ├── Mapping/
 │   ├── MapperInterface.php
-│   ├── BaseMapper.php          # Shared logic for all mappers
-│   ├── ClaimMapper.php         # Uses claim_mapping.json
+│   ├── BaseMapper.php             # Shared logic for all mappers
+│   ├── ClaimMapper.php            # Uses claim_mapping.json
 │   ├── PatientMapper.php
 │   ├── CoverageMapper.php
 │   ├── PractitionerMapper.php
 │   ├── OrganizationMapper.php
 │   ├── CompositeClaimMapper.php  # Final assembler for CollaborateMD format
 config/
-│   ├── *.json                  # Mapping definitions per resource
+│   ├── *.json                     # Mapping definition files per resource
 public/
-├── index.php                  # Main entry point
+├── index.php                     # Main entry point
 output/
-├── claim-output.xml           # Saved XML payloads
-FHIR-*.json                    # Input data (FHIR resource examples)
-vendor/                        # Composer dependencies
+├── claim-output.xml              # Saved XML payloads
+FHIR-*.json                       # Input data (FHIR resource examples)
+vendor/                           # Composer dependencies
 ```
 
 ## Running the Script
+
+To run the translation module:
 
 ```bash
 php public/index.php
 ```
 
-This generates and echoes the mapped XML from your configured input files.
+This generates and echoes the mapped XML from your configured FHIR input files.
 
-To save to file:
+To save the output to a file:
 
 ```php
 // Inside index.php
 $doc->save(__DIR__ . '/../output/claim-output.xml');
 ```
 
-## 🛠 Configuration
+## Configuration
 
-This system depends on JSON mapping files in `config/`, which define how FHIR paths are translated to XML elements.
+This system depends on JSON mapping files located in the `config/` directory. These files define how FHIR paths are translated into XML elements.
 
 ### Example: `patient_mapping.json`
 
@@ -73,36 +74,40 @@ This system depends on JSON mapping files in `config/`, which define how FHIR pa
 }
 ```
 
-### Special Syntax:
+### Special Mapping Syntax
 
-- `"group.subfield"` → renders `<group><subfield>...</subfield></group>`
-- `"array[].code"` → loops over `array[]` and places each `code` inside the parent tag
+- `"group.subfield"` → renders as `<group><subfield>...</subfield></group>`
+- `"array[].code"` → loops over `array[]` and inserts each `code` into the appropriate parent block
 
-### Reference Handling:
+### Reference Handling
 
-If a value is a FHIR reference (e.g., `"Patient/example"`), the output will include:
+If a field is a FHIR reference (e.g., `"Patient/example"`), the output will include a placeholder tag for later resolution:
 
 ```xml
 <PatientReference resolveLater="true">Patient/example</PatientReference>
 ```
 
-This allows external systems to resolve links after XML generation.
+This allows external systems to handle ID resolution after XML generation.
 
 ## How It Works
 
-- Each mapper loads its mapping file and transforms a FHIR resource into an XML DOMElement
-- `BaseMapper` handles:
-  - `extractValue()` from FHIR paths
-  - tag grouping
-  - array loops
-  - date formatting (`YYYY-MM-DD` → `MM/DD/YYYY`)
-  - reference deferral logic
-- `CompositeClaimMapper` orchestrates the final namespaced CollaborateMD structure
+- Each mapper loads its mapping file and converts a FHIR resource into a `DOMElement`
+- The `BaseMapper` handles:
+  - Extracting values using dotted or indexed FHIR paths
+  - Building grouped tags (e.g., `Address.City`)
+  - Looping over arrays like `item[]`, `diagnosis[]`
+  - Formatting dates (`YYYY-MM-DD` → `MM/DD/YYYY`)
+  - Deferring unresolved references
+- `CompositeClaimMapper` combines the XML blocks into the final CollaborateMD `<ns2:Claim>` structure
+
+## Example Output
+
+See `output/claim-output.xml` for a complete example of the final XML payload.
 
 ## Requirements
 
 - PHP 8.0 or later
-- Composer (for autoloading)
+- Composer (for autoloading dependencies)
 
 ## License
 
@@ -111,3 +116,4 @@ MIT License
 ---
 
 Shepherd Ncube — 2025
+
